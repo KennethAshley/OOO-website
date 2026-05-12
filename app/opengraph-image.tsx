@@ -5,10 +5,13 @@ export const alt =
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-async function loadFont(weight: number): Promise<ArrayBuffer | null> {
+async function loadGoogleFont(
+  family: string,
+  weight: number,
+): Promise<ArrayBuffer | null> {
   try {
     const cssRes = await fetch(
-      `https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@${weight}&display=swap`,
+      `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}&display=swap`,
       {
         headers: {
           "User-Agent":
@@ -29,27 +32,33 @@ async function loadFont(weight: number): Promise<ArrayBuffer | null> {
 }
 
 export default async function OpenGraphImage() {
-  const [light, regular] = await Promise.all([loadFont(300), loadFont(400)]);
+  const display = await loadGoogleFont("Big Shoulders Display", 900);
 
   type OgFont = {
     name: string;
     data: ArrayBuffer;
-    weight: 300 | 400;
+    weight: 900;
     style: "normal";
   };
   const fonts: OgFont[] = [];
-  if (light) fonts.push({ name: "JetBrains Mono", data: light, weight: 300, style: "normal" });
-  if (regular) fonts.push({ name: "JetBrains Mono", data: regular, weight: 400, style: "normal" });
+  if (display)
+    fonts.push({
+      name: "Big Shoulders Display",
+      data: display,
+      weight: 900,
+      style: "normal",
+    });
 
-  const fontFamily =
+  const displayFamily =
     fonts.length > 0
-      ? "'JetBrains Mono', ui-monospace, monospace"
-      : "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+      ? "'Big Shoulders Display', Impact, sans-serif"
+      : "Impact, 'Helvetica Neue Condensed Bold', sans-serif";
+  const monoFamily = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
   const PAPER = "#f7f5f0";
   const INK = "#0a0a0a";
-  const FOLIO = "#a8a39a";
-  const RULE = "#d8d4cc";
+  const FOLIO = "#6a6458";
+  const STOP = "#b14000";
 
   return new ImageResponse(
     (
@@ -61,82 +70,112 @@ export default async function OpenGraphImage() {
           color: INK,
           display: "flex",
           flexDirection: "column",
-          padding: "48px 64px",
-          fontFamily,
         }}
       >
-        {/* Top folio */}
+        {/* Top press-credentials bar */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            borderTop: `1px solid ${RULE}`,
-            paddingTop: 14,
+            alignItems: "baseline",
+            borderBottom: `3px solid ${INK}`,
+            padding: "20px 56px",
+            fontFamily: monoFamily,
             fontSize: 18,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: FOLIO,
           }}
         >
-          <span>A Documentary Studio</span>
-          <span>Vol. I · MMXXVI</span>
+          <span style={{ color: INK }}>Out of Office</span>
+          <span style={{ color: FOLIO }}>Dispatch No. 01 · MMXXVI</span>
         </div>
 
-        {/* Cover wordmark */}
+        {/* Broadside body */}
         <div
           style={{
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
             justifyContent: "center",
-            gap: 32,
+            padding: "0 56px",
           }}
         >
           <div
             style={{
-              fontSize: 168,
-              fontWeight: 300,
-              letterSpacing: "0.02em",
+              fontFamily: displayFamily,
+              fontSize: 248,
+              fontWeight: 900,
+              letterSpacing: "-0.025em",
               textTransform: "uppercase",
-              lineHeight: 0.92,
-              textAlign: "center",
+              lineHeight: 0.84,
               display: "flex",
               flexDirection: "column",
+              color: INK,
             }}
           >
             <span>Out of</span>
             <span>Office</span>
           </div>
+
+          {/* Slab + tagline — stop-press bar above the kicker */}
           <div
             style={{
-              fontSize: 28,
-              fontWeight: 300,
-              color: INK,
-              textAlign: "center",
-              lineHeight: 1.35,
-              maxWidth: 760,
+              marginTop: 36,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            Cinema for the decentralized intelligence era.
+            <div
+              style={{
+                width: "100%",
+                height: 14,
+                background: STOP,
+              }}
+            />
+            <div
+              style={{
+                marginTop: 16,
+                fontFamily: monoFamily,
+                fontSize: 22,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: INK,
+              }}
+            >
+              Cinema for the decentralized intelligence era
+            </div>
           </div>
         </div>
 
-        {/* Bottom folio */}
+        {/* Bottom dispatch bar */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            borderTop: `1px solid ${RULE}`,
-            paddingTop: 14,
+            alignItems: "baseline",
+            borderTop: `3px solid ${INK}`,
+            padding: "20px 56px",
+            fontFamily: monoFamily,
             fontSize: 18,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: FOLIO,
           }}
         >
-          <span>Out of Office</span>
-          <span>P. 01 / 01</span>
+          <div style={{ display: "flex", gap: 32 }}>
+            <span>
+              <span style={{ color: STOP }}>Watch</span>
+              <span style={{ color: INK, marginLeft: 12 }}>
+                youtube.com/@outofoffice
+              </span>
+            </span>
+            <span>
+              <span style={{ color: STOP }}>Follow</span>
+              <span style={{ color: INK, marginLeft: 12 }}>
+                x.com/outofoffice
+              </span>
+            </span>
+          </div>
+          <span style={{ color: FOLIO }}>© MMXXVI</span>
         </div>
       </div>
     ),
