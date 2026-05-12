@@ -1,100 +1,68 @@
 const YOUTUBE_URL = "https://youtube.com/@outofoffice";
 const TWITTER_URL = "https://x.com/outofoffice";
 
-const META: ReadonlyArray<[string, string]> = [
-  ["Status", "Active"],
-  ["Est.", "MMXXVI"],
-  ["Focus", "Decentralized AI"],
-  ["Format", "Film"],
-  ["Channels", "YT / X"],
-  ["Transmission", "01"],
-];
-
 export default function Home() {
   return (
-    <div className="flex min-h-dvh w-full flex-col bg-background text-foreground">
-      <div className="mx-auto flex w-full max-w-[80rem] flex-1 flex-col px-6 py-10 sm:px-10 sm:py-14 md:px-16 md:py-16">
-        {/* Top transmission bar */}
-        <div className="flex items-center justify-between border-t border-rule pt-3 text-[0.7rem] uppercase tracking-[0.18em] text-muted">
-          <span>Out-of-Office / Broadcast</span>
-          <span aria-hidden="true">◐ Live</span>
-        </div>
+    <div className="min-h-dvh w-full bg-paper text-ink">
+      <div className="mx-auto flex min-h-dvh w-full max-w-[72rem] flex-col px-8 py-8 md:px-16 md:py-10">
+        {/* Masthead — publication folio */}
+        <header className="flex items-baseline justify-between gap-6 border-t border-rule pt-3 text-[0.68rem] uppercase tracking-[0.22em] text-folio">
+          <span>A Documentary Studio</span>
+          <span className="hidden sm:inline">Decentralized Intelligence</span>
+          <span>Vol. I · MMXXVI</span>
+        </header>
 
-        {/* Main two-column grid */}
-        <main className="mt-12 grid flex-1 grid-cols-1 gap-12 md:mt-16 md:grid-cols-[1.4fr_1fr] md:gap-0">
-          {/* LEFT COLUMN */}
-          <section className="flex flex-col gap-10 md:pr-12 lg:pr-16">
-            <h1
-              className="font-medium uppercase leading-[1.02] tracking-[0.18em]"
-              style={{ fontSize: "clamp(1.75rem, 5.6vw, 3.5rem)" }}
-            >
-              Out of Office
-            </h1>
+        {/* Cover — stacked wordmark + editorial subtitle */}
+        <section className="flex flex-1 flex-col items-center justify-center py-24 md:py-32">
+          <h1
+            aria-label="Out of Office"
+            className="text-center font-extralight uppercase leading-[0.92] tracking-[0.02em]"
+            style={{ fontSize: "clamp(3.5rem, 13vw, 9rem)" }}
+          >
+            <span className="block">Out&nbsp;of</span>
+            <span className="block">Office</span>
+          </h1>
 
-            <p
-              className="text-lg leading-[1.45] text-foreground"
-              style={{ maxWidth: "30ch" }}
-            >
-              Cinema for the decentralized intelligence era.
-            </p>
+          <p
+            className="mt-14 max-w-[28ch] text-center font-light leading-[1.35] md:mt-20"
+            style={{ fontSize: "clamp(1rem, 1.7vw, 1.25rem)" }}
+          >
+            Cinema for the decentralized intelligence era.
+          </p>
+        </section>
 
-            <p
-              className="text-sm leading-[1.7] text-foreground/85"
-              style={{ maxWidth: "46ch" }}
-            >
-              Out of Office is a film studio covering the people, ideas, and
-              protocols building AI in the open.
-            </p>
-          </section>
+        {/* Editorial body — narrow column, offset right */}
+        <section className="mb-24 flex justify-end md:mb-32">
+          <p className="max-w-[38ch] text-[0.92rem] font-light leading-[1.85] md:text-[0.95rem]">
+            Out of Office is a film studio covering the people, ideas, and
+            protocols building artificial intelligence in the open.
+          </p>
+        </section>
 
-          {/* RIGHT COLUMN — divider on desktop, top border on mobile */}
-          <aside className="flex flex-col gap-8 border-t border-rule pt-10 md:border-l md:border-t-0 md:pl-12 md:pt-0 lg:pl-16">
-            <dl className="grid grid-cols-[7.5rem_1fr] gap-x-4 gap-y-3 text-[0.72rem] uppercase tracking-[0.14em] sm:grid-cols-[8.5rem_1fr]">
-              {META.map(([label, value]) => (
-                <div key={label} className="contents">
-                  <dt className="text-muted">{label}</dt>
-                  <dd className="text-foreground">{value}</dd>
-                </div>
-              ))}
-            </dl>
-
-            <hr className="border-t border-rule" />
-
-            <div className="flex flex-col gap-3">
-              <ChannelLink
-                href={YOUTUBE_URL}
-                label="Watch on YouTube"
-                ariaLabel="Watch Out of Office on YouTube (opens in new tab)"
-              />
-              <ChannelLink
-                href={TWITTER_URL}
-                label="Follow on Twitter"
-                ariaLabel="Follow Out of Office on Twitter (opens in new tab)"
-              />
-            </div>
-          </aside>
-        </main>
-
-        {/* Footer */}
-        <footer className="mt-16 flex items-center justify-between border-t border-rule pt-4 text-[0.7rem] uppercase tracking-[0.18em] text-muted md:mt-20">
-          <span>Out of Office © MMXXVI</span>
-          <span className="flex items-center gap-2">
-            <span>End of transmission</span>
-            <span className="ooo-caret" aria-hidden="true" />
-          </span>
+        {/* Bottom folio — table of contents + page number */}
+        <footer className="flex flex-col gap-3 border-t border-rule pt-3 text-[0.68rem] uppercase tracking-[0.22em] sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+          <nav className="flex gap-6 md:gap-10">
+            <FolioLink href={YOUTUBE_URL} index="01" label="Watch" channel="YT" ariaLabel="Watch on YouTube (opens in new tab)" />
+            <FolioLink href={TWITTER_URL} index="02" label="Follow" channel="X" ariaLabel="Follow on Twitter (opens in new tab)" />
+          </nav>
+          <span className="text-folio">P. 01 / 01</span>
         </footer>
       </div>
     </div>
   );
 }
 
-function ChannelLink({
+function FolioLink({
   href,
+  index,
   label,
+  channel,
   ariaLabel,
 }: {
   href: string;
+  index: string;
   label: string;
+  channel: string;
   ariaLabel: string;
 }) {
   return (
@@ -103,21 +71,13 @@ function ChannelLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ariaLabel}
-      className="group flex items-center justify-between border border-rule px-4 py-4 text-[0.72rem] uppercase tracking-[0.16em] transition-colors duration-150 hover:bg-foreground hover:text-background hover:border-foreground"
+      className="group inline-flex items-baseline gap-2 text-ink"
     >
-      <span className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="inline-block h-2.5 w-2.5 border border-current transition-colors"
-        />
+      <span className="text-folio">{index}</span>
+      <span className="border-b border-transparent transition-colors duration-200 group-hover:border-ink">
         {label}
       </span>
-      <span
-        aria-hidden="true"
-        className="inline-block transition-transform duration-150 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]"
-      >
-        ↗
-      </span>
+      <span className="text-folio">/ {channel}</span>
     </a>
   );
 }
