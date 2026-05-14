@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Out of Office — Cinema for the decentralized intelligence era.";
+  "Out of Office. Cinema for the decentralized intelligence era.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -15,7 +15,7 @@ async function loadGoogleFont(
       {
         headers: {
           "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+            "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36",
         },
       },
     );
@@ -32,33 +32,50 @@ async function loadGoogleFont(
 }
 
 export default async function OpenGraphImage() {
-  const display = await loadGoogleFont("Big Shoulders Display", 900);
+  const [anton, sansRegular, sansBold] = await Promise.all([
+    loadGoogleFont("Anton", 400),
+    loadGoogleFont("Public Sans", 400),
+    loadGoogleFont("Public Sans", 700),
+  ]);
 
   type OgFont = {
     name: string;
     data: ArrayBuffer;
-    weight: 900;
+    weight: 400 | 700;
     style: "normal";
   };
   const fonts: OgFont[] = [];
-  if (display)
+  if (anton)
+    fonts.push({ name: "Anton", data: anton, weight: 400, style: "normal" });
+  if (sansRegular)
     fonts.push({
-      name: "Big Shoulders Display",
-      data: display,
-      weight: 900,
+      name: "Public Sans",
+      data: sansRegular,
+      weight: 400,
+      style: "normal",
+    });
+  if (sansBold)
+    fonts.push({
+      name: "Public Sans",
+      data: sansBold,
+      weight: 700,
       style: "normal",
     });
 
-  const displayFamily =
-    fonts.length > 0
-      ? "'Big Shoulders Display', Impact, sans-serif"
-      : "Impact, 'Helvetica Neue Condensed Bold', sans-serif";
-  const monoFamily = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+  const display =
+    anton !== null
+      ? "'Anton', 'Public Sans', sans-serif"
+      : "'Public Sans', system-ui, sans-serif";
+  const body =
+    sansRegular !== null
+      ? "'Public Sans', system-ui, sans-serif"
+      : "system-ui, sans-serif";
 
-  const PAPER = "#f7f5f0";
-  const INK = "#0a0a0a";
-  const FOLIO = "#6a6458";
-  const STOP = "#b14000";
+  const PAPER = "#f0ebe2";
+  const INK = "#1c1916";
+  const RUST = "#b5451b";
+  const MID = "#7a7469";
+  const RULE = "rgba(28,25,22,0.18)";
 
   return new ImageResponse(
     (
@@ -70,112 +87,124 @@ export default async function OpenGraphImage() {
           color: INK,
           display: "flex",
           flexDirection: "column",
+          fontFamily: body,
         }}
       >
-        {/* Top press-credentials bar */}
+        {/* Masthead */}
         <div
           style={{
             display: "flex",
+            alignItems: "flex-end",
             justifyContent: "space-between",
-            alignItems: "baseline",
-            borderBottom: `3px solid ${INK}`,
-            padding: "20px 56px",
-            fontFamily: monoFamily,
-            fontSize: 18,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
+            padding: "40px 64px 28px",
+            borderBottom: `1px solid ${RULE}`,
           }}
         >
-          <span style={{ color: INK }}>Out of Office</span>
-          <span style={{ color: FOLIO }}>Dispatch No. 01 · MMXXVI</span>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              fontFamily: display,
+              fontSize: 32,
+              textTransform: "uppercase",
+              lineHeight: 0.95,
+              letterSpacing: "0.01em",
+            }}
+          >
+            <span>Out of Office</span>
+            <span>Media Group</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: 28,
+              fontSize: 16,
+              textTransform: "uppercase",
+              letterSpacing: "0.16em",
+              color: MID,
+            }}
+          >
+            <span>Issue 01</span>
+            <span>May 2026</span>
+            <span>Raleigh NC</span>
+            <span style={{ color: RUST }}>On the record</span>
+          </div>
         </div>
 
-        {/* Broadside body */}
+        {/* Hero stack */}
         <div
           style={{
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
-            padding: "0 56px",
+            padding: "56px 64px",
           }}
         >
-          <div
+          <span
             style={{
-              fontFamily: displayFamily,
-              fontSize: 248,
-              fontWeight: 900,
-              letterSpacing: "-0.025em",
+              fontFamily: display,
+              fontSize: 132,
+              lineHeight: 0.92,
               textTransform: "uppercase",
-              lineHeight: 0.84,
-              display: "flex",
-              flexDirection: "column",
+              letterSpacing: "0.005em",
               color: INK,
             }}
           >
-            <span>Out of</span>
-            <span>Office</span>
-          </div>
-
-          {/* Slab + tagline — stop-press bar above the kicker */}
-          <div
+            I am currently
+          </span>
+          <span
             style={{
-              marginTop: 36,
-              display: "flex",
-              flexDirection: "column",
+              fontFamily: display,
+              fontSize: 132,
+              lineHeight: 0.92,
+              textTransform: "uppercase",
+              letterSpacing: "0.005em",
+              color: INK,
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                height: 14,
-                background: STOP,
-              }}
-            />
-            <div
-              style={{
-                marginTop: 16,
-                fontFamily: monoFamily,
-                fontSize: 22,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: INK,
-              }}
-            >
-              Cinema for the decentralized intelligence era
-            </div>
-          </div>
+            out of office.
+          </span>
+          <span
+            style={{
+              display: "flex",
+              width: 72,
+              height: 3,
+              background: INK,
+              marginTop: 32,
+              marginBottom: 28,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: body,
+              fontWeight: 700,
+              fontSize: 40,
+              lineHeight: 1.1,
+              letterSpacing: "-0.01em",
+              color: INK,
+              maxWidth: 880,
+            }}
+          >
+            Cinema for the decentralized intelligence era.
+          </span>
         </div>
 
-        {/* Bottom dispatch bar */}
+        {/* Colophon strip */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "baseline",
-            borderTop: `3px solid ${INK}`,
-            padding: "20px 56px",
-            fontFamily: monoFamily,
-            fontSize: 18,
-            letterSpacing: "0.22em",
+            padding: "20px 64px 28px",
+            borderTop: `1px solid ${RULE}`,
+            fontSize: 15,
             textTransform: "uppercase",
+            letterSpacing: "0.18em",
+            color: MID,
           }}
         >
-          <div style={{ display: "flex", gap: 32 }}>
-            <span>
-              <span style={{ color: STOP }}>Watch</span>
-              <span style={{ color: INK, marginLeft: 12 }}>
-                youtube.com/@outofoffice
-              </span>
-            </span>
-            <span>
-              <span style={{ color: STOP }}>Follow</span>
-              <span style={{ color: INK, marginLeft: 12 }}>
-                x.com/outofoffice
-              </span>
-            </span>
-          </div>
-          <span style={{ color: FOLIO }}>© MMXXVI</span>
+          <span>Out of Office Media Group · 2026</span>
+          <span>Ken Nicholson &amp; Andre Payne</span>
         </div>
       </div>
     ),
